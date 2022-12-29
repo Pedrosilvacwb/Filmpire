@@ -11,6 +11,8 @@ import {
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useTheme } from '@mui/styles';
+import { useGetGenresQuery } from '../../services/TMDB';
+import genreIcons from '../../assets/genres';
 import useStyles from './styles';
 
 const redLogo =
@@ -34,6 +36,7 @@ const demoCategories = [
 const SideBar = ({ setMobileOpen }) => {
   const classes = useStyles();
   const theme = useTheme();
+  const { data, error, isFetching } = useGetGenresQuery();
 
   return (
     <>
@@ -50,14 +53,14 @@ const SideBar = ({ setMobileOpen }) => {
         {categories.map(({ label, value }) => (
           <Link key={value} className={classes.links} to="/">
             <ListItem button>
-              {/* <ListItemIcon>
+              <ListItemIcon>
                 <img
                   height={30}
                   className={classes.genreImage}
-                  src={redLogo}
+                  src={genreIcons[label.toLowerCase()]}
                   alt=""
                 />
-              </ListItemIcon> */}
+              </ListItemIcon>
               <ListItemText primary={label} />
             </ListItem>
           </Link>
@@ -66,21 +69,27 @@ const SideBar = ({ setMobileOpen }) => {
       <Divider />
       <List>
         <ListSubheader>Genres</ListSubheader>
-        {demoCategories.map(({ label, value }) => (
-          <Link key={value} className={classes.links} to="/">
-            <ListItem button>
-              {/* <ListItemIcon>
-                <img
-                  height={30}
-                  className={classes.genreImage}
-                  src={redLogo}
-                  alt=""
-                />
-              </ListItemIcon> */}
-              <ListItemText primary={label} />
-            </ListItem>
-          </Link>
-        ))}
+        {isFetching ? (
+          <Box display="flex" justifyContent="center">
+            <CircularProgress size="4rem" />
+          </Box>
+        ) : (
+          data.genres.map(({ name, id }) => (
+            <Link key={name} className={classes.links} to="/">
+              <ListItem button>
+                <ListItemIcon>
+                  <img
+                    height={30}
+                    className={classes.genreImage}
+                    src={genreIcons[name.toLowerCase()]}
+                    alt=""
+                  />
+                </ListItemIcon>
+                <ListItemText primary={name} />
+              </ListItem>
+            </Link>
+          ))
+        )}
       </List>
     </>
   );
