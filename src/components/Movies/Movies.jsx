@@ -6,12 +6,20 @@ import {
   useMediaQuery,
 } from '@mui/material';
 import { useSelector } from 'react-redux';
-
+import { selectGenreOrCategory } from '../../features/currentGenreOrCategory';
 import { useGetMoviesQuery } from '../../services/TMDB';
 import MovieList from '../MovieList/MovieList';
 
 const Movies = () => {
-  const { data, error, isFetching } = useGetMoviesQuery();
+  const [page, setPage] = React.useState(1);
+  const { genreOrCategoryName, searchQuery } = useSelector(
+    (state) => state.currentGenreOrCategory,
+  );
+  const { data, error, isFetching } = useGetMoviesQuery({
+    genreOrCategoryName,
+    page,
+    searchQuery,
+  });
 
   if (isFetching) {
     return (
