@@ -9,8 +9,10 @@ import {
   Box,
   CircularProgress,
 } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { useTheme } from '@mui/styles';
+import { selectGenreOrCategory } from '../../features/currentGenreOrCategory';
 import { useGetGenresQuery } from '../../services/TMDB';
 import genreIcons from '../../assets/genres';
 import useStyles from './styles';
@@ -34,9 +36,13 @@ const demoCategories = [
   { label: 'Animation', value: 'animation' },
 ];
 const SideBar = ({ setMobileOpen }) => {
+  const { genreOrCategoryName } = useSelector(
+    (state) => state.currentGenreOrCategory,
+  );
   const classes = useStyles();
   const theme = useTheme();
   const { data, error, isFetching } = useGetGenresQuery();
+  const dispatch = useDispatch();
 
   return (
     <>
@@ -52,7 +58,10 @@ const SideBar = ({ setMobileOpen }) => {
         <ListSubheader>Categories</ListSubheader>
         {categories.map(({ label, value }) => (
           <Link key={value} className={classes.links} to="/">
-            <ListItem button>
+            <ListItem
+              button
+              onClick={() => dispatch(selectGenreOrCategory(value))}
+            >
               <ListItemIcon>
                 <img
                   height={30}
@@ -76,7 +85,10 @@ const SideBar = ({ setMobileOpen }) => {
         ) : (
           data.genres.map(({ name, id }) => (
             <Link key={name} className={classes.links} to="/">
-              <ListItem button>
+              <ListItem
+                button
+                onClick={() => dispatch(selectGenreOrCategory(id))}
+              >
                 <ListItemIcon>
                   <img
                     height={30}
