@@ -16,15 +16,42 @@ import {
 } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import useStyles from './styles';
 import { Search, SideBar } from '../index';
+import { fetchToken, getSessionId, movieApi } from '../../utils';
+import { setUser, userSelector } from '../../features/auth';
 
 const NavBar = () => {
+  const { isAuthenticated, user } = useSelector(userSelector);
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const classes = useStyles();
   const isMobile = useMediaQuery('(max-width:600px)');
   const theme = useTheme();
-  const isAuthenticaded = true;
+  const dispatch = useDispatch();
+
+  const token = window.localStorage.getItem('@MovieToken');
+  const sessionIdFromLS = window.localStorage.getItem('@MovieId');
+  React.useEffect(() => {
+    const loginUser = async () => {
+      if (token) {
+        if (sessionIdFromLS) {
+          const { data: userData } = await movieApi.get(
+            `/account?session_id=${sessionIdFromLS}`,
+          );
+          dispatch(setUser(userData));
+        } else {
+          const sessionId = getSessionId();
+          const { data: userData } = await movieApi.get(
+            `/account?session_id=${sessionId}`,
+          );
+
+          dispatch(setUser(userData));
+        }
+      }
+    };
+    loginUser();
+  }, [token]);
   return (
     <>
       <AppBar position="fixed">
@@ -45,15 +72,15 @@ const NavBar = () => {
           </IconButton>
           {!isMobile && <Search />}
           <div>
-            {!isAuthenticaded ? (
-              <Button color="inherit">
+            {!isAuthenticated ? (
+              <Button color="inherit" onClick={() => fetchToken()}>
                 Login &nbsp; <AccountCircle />
               </Button>
             ) : (
               <Button
                 color="inherit"
                 component={Link}
-                to="/profile/:id"
+                to={`/profile/${user.id}`}
                 className={classes.linkButton}
               >
                 {!isMobile && <>My Movies &nbsp; </>}
