@@ -17,7 +17,7 @@ const Movies = () => {
   const [page, setPage] = React.useState(1);
   const large = useGetMoviesQuery((theme) => theme.breakpoints.onl('lg'));
 
-  const numberOfMovies = large ? 17 : 19;
+  const numberOfMovies = large ? 19 : 17;
   const { genreOrCategoryName, searchQuery } = useSelector(
     (state) => state.currentGenreOrCategory,
   );

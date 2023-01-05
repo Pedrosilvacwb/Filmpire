@@ -44,15 +44,12 @@ const SideBar = ({ setMobileOpen }) => {
   const { data, error, isFetching } = useGetGenresQuery();
   const dispatch = useDispatch();
 
+  React.useEffect(() => {
+    setMobileOpen(false);
+  }, [genreOrCategoryName]);
+
   return (
     <>
-      {/* <Link to="/" className={classes.imageLink}>
-        <img
-          className={classes.image}
-          src={theme.palette.mode === 'light' ? redLogo : blueLogo}
-          alt="Filmpire Logo"
-        />
-      </Link> */}
       <Divider />
       <List>
         <ListSubheader>Categories</ListSubheader>
