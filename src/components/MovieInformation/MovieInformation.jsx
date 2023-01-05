@@ -28,23 +28,26 @@ import { MovieList } from '..';
 import {
   useGetRecomendationsQuery,
   useGetMovieQuery,
+  useGetListQuery,
 } from '../../services/TMDB';
 
 import useStyles from './styles';
 import genreIcons from '../../assets/genres';
 
 import { selectGenreOrCategory } from '../../features/currentGenreOrCategory';
+import { userSelector } from '../../features/auth';
 
 const MovieInformation = () => {
+  const [isMovieFavorited, setIsMovieFavorited] = React.useState(true);
+  const [isMovieWatchlisted, setIsMovieWatchlisted] = React.useState(true);
+
   const { id } = useParams();
-  const { data, isFetching, error } = useGetMovieQuery(id);
   const [open, setOpen] = React.useState();
 
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const addToFavorites = () => {};
-  const addToWatchList = () => {};
+  const { data, isFetching, error } = useGetMovieQuery(id);
 
   const { data: recommendations, isFetching: isRecommendationsFetching } =
     useGetRecomendationsQuery({
@@ -52,8 +55,6 @@ const MovieInformation = () => {
       movie_id: id,
     });
 
-  const isMovieFavorited = true;
-  const isMovieWatchlisted = true;
   if (isFetching) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center">
@@ -70,7 +71,12 @@ const MovieInformation = () => {
   }
   return (
     <Grid container className={classes.containerSpaceAround}>
-      <Grid item sm={12} lg={4}>
+      <Grid
+        item
+        sm={12}
+        lg={4}
+        style={{ display: 'flex', marginBottom: '30px' }}
+      >
         <img
           className={classes.poster}
           src={`https://image.tmdb.org/t/p/w500/${data?.poster_path}`}
@@ -96,10 +102,7 @@ const MovieInformation = () => {
             </Typography>
           </Box>
           <Typography variant="h6" align="center" gutterBottom>
-            {data?.runtime}min /{' '}
-            {data?.spoken_languages.length > 0
-              ? data?.spoken_languages[0].name
-              : ''}
+            {data?.runtime}min | Language: {data?.spoken_languages[0].name}
           </Typography>
         </Grid>
 
@@ -144,7 +147,7 @@ const MovieInformation = () => {
                       xs={4}
                       md={2}
                       component={Link}
-                      to={`/actors/${char.id}`}
+                      to={`/actor/${char.id}`}
                       style={{ textDecoration: 'none' }}
                     >
                       <img
@@ -195,17 +198,13 @@ const MovieInformation = () => {
             <Grid item xs={12} sm={6} className={classes.buttonsContainer}>
               <ButtonGroup size="medium" variant="outlined">
                 <Button
-                  onClick={addToFavorites}
                   endIcon={
                     isMovieFavorited ? <FavoriteBorderOutlined /> : <Favorite />
                   }
                 >
                   {isMovieFavorited ? 'Unfavorite' : 'Favorite'}
                 </Button>
-                <Button
-                  onClick={addToWatchList}
-                  endIcon={isMovieWatchlisted ? <Remove /> : <PlusOne />}
-                >
+                <Button endIcon={isMovieWatchlisted ? <Remove /> : <PlusOne />}>
                   Wacthlist
                 </Button>
                 <Button

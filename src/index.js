@@ -5,17 +5,19 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Provider } from 'react-redux';
 import store from './app/store';
 import App from './App';
+import './index.css';
+import ToggleColorModeProvider from './utils/ToggleColorMode';
 
 const container = document.getElementById('root');
 const root = createRoot(container);
-const theme = createTheme({});
+
 root.render(
   <Provider store={store}>
-    <ThemeProvider theme={theme}>
+    <ToggleColorModeProvider>
       <BrowserRouter>
         <App />
       </BrowserRouter>
-    </ThemeProvider>
+    </ToggleColorModeProvider>
     ,
   </Provider>,
 );
