@@ -17,6 +17,7 @@ import {
 import { useTheme } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { colorModeContext } from '../../utils/ToggleColorMode';
 import useStyles from './styles';
 import { Search, SideBar } from '../index';
 import { fetchToken, getSessionId, movieApi } from '../../utils';
@@ -29,7 +30,7 @@ const NavBar = () => {
   const isMobile = useMediaQuery('(max-width:600px)');
   const theme = useTheme();
   const dispatch = useDispatch();
-
+  const colorMode = React.useContext(colorModeContext);
   const token = window.localStorage.getItem('@MovieToken');
   const sessionIdFromLS = window.localStorage.getItem('@MovieId');
   React.useEffect(() => {
@@ -67,7 +68,11 @@ const NavBar = () => {
               <Menu />
             </IconButton>
           )}
-          <IconButton color="inherit" sx={{ ml: 1 }}>
+          <IconButton
+            color="inherit"
+            sx={{ ml: 1 }}
+            onClick={colorMode.toggleColorMode}
+          >
             {theme.palette.mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
           </IconButton>
           {!isMobile && <Search />}

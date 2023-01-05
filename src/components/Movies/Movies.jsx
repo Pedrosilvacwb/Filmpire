@@ -6,12 +6,18 @@ import {
   useMediaQuery,
 } from '@mui/material';
 import { useSelector } from 'react-redux';
+import { ThemeContext } from '@emotion/react';
 import { selectGenreOrCategory } from '../../features/currentGenreOrCategory';
 import { useGetMoviesQuery } from '../../services/TMDB';
 import MovieList from '../MovieList/MovieList';
+import Pagination from '../Pagination/Pagination';
+import { FeaturedMovie } from '..';
 
 const Movies = () => {
   const [page, setPage] = React.useState(1);
+  const large = useGetMoviesQuery((theme) => theme.breakpoints.onl('lg'));
+
+  const numberOfMovies = large ? 17 : 19;
   const { genreOrCategoryName, searchQuery } = useSelector(
     (state) => state.currentGenreOrCategory,
   );
@@ -43,7 +49,13 @@ const Movies = () => {
   }
   return (
     <div>
-      <MovieList movies={data} />
+      <FeaturedMovie movie={data?.results[0]} />
+      <MovieList movies={data} numberOfMovies={numberOfMovies} />
+      <Pagination
+        page={page}
+        setPage={setPage}
+        totalPages={data?.total_pages}
+      />
     </div>
   );
 };
